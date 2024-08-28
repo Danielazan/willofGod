@@ -1,7 +1,10 @@
 const {
     AddProducts,
     upload,
-    GetAllProducts
+    GetAllProducts,
+    UpdateproductImage,
+    UpdateQuantity,
+    DeleteRecord 
 } = require("../Controller/Product")
 const express = require("express")
 
@@ -11,7 +14,10 @@ router.post('/products',upload.single('image'), AddProducts)
 
 router.get("/products", GetAllProducts)
 
-// router.get("/machine/:id", GetSingleMachine)
+router.put("/productsimg",upload.single('image'), UpdateproductImage)
+
+router.put("/productsQty", UpdateQuantity)
+
 
 
 
@@ -19,7 +25,7 @@ router.get("/products", GetAllProducts)
 
 
 
-// router.delete("/machine/:id",DeleteRecord)
+router.delete("/products/:id",DeleteRecord)
 
 
 
