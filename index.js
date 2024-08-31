@@ -5,6 +5,8 @@ const sequelize = require('./database')
 const path = require("path")
 const user = require("./Routes/User")
 const Products = require("./Routes/Products")
+const Branch = require("./Routes/Branch")
+const Customer = require("./Routes/Customer")
 
 require("dotenv").config()
 app = express()
@@ -17,6 +19,9 @@ app.use(express.static("public"))
 
 app.use("/api",user)
 app.use('/api',Products)
+app.use('/api',Branch)
+app.use('/api',Customer)
+
 
 sequelize.sync().then(()=>{
     app.listen(process.env.PORT,(req,res)=>{

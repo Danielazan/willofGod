@@ -20,7 +20,7 @@ const upload = multer({ storage: storage });
 const AddProducts = async (req, res) => {
   const image = req.file;
 
-  const { Name, Quantity, Previous_Qty, NewQtyAdded } = req.body;
+  const { Name, Quantity, Previous_Qty, NewQtyAdded,BranchName } = req.body;
 
   try {
     if (!image) {
@@ -36,6 +36,7 @@ const AddProducts = async (req, res) => {
       Previous_Qty: 0,
       NewQtyAdded: Quantity,
       ImagePath: image.filename,
+      BranchName:BranchName
     }).then((result) => {
       res.status(200).json(result);
       return result;
@@ -55,6 +56,19 @@ const GetAllProducts = async (req, res) => {
   }
 };
 
+const GetProductBranch = async(req,res)=>{
+  const BranchName= req.params.Name
+  
+  try {
+
+    const Getone = await Product.findAll({where: {BranchName:BranchName}}).then(result =>{
+      res.status(200).json(result)
+    })
+  } catch (error) {
+    res.status(400).json({error:error.message})
+  }
+
+}
 const UpdateQuantity = async (req, res) => {
   const { productid,Quantity } = req.body;
 
@@ -87,6 +101,41 @@ const UpdateQuantity = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
+const UpdateQuantitySales = async (req, res) => {
+  const { productid,Quantity } = req.body;
+
+  try {
+    // Fetch the existing product to get the current image path
+    const preproduct = await Product.findOne({ where: { id: productid } });
+
+    if (!preproduct) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    Previous_ProductQty = await preproduct.Quantity;
+
+    // Update the database with the new image path
+    Product.update(
+      {
+        Quantity: preproduct.Quantity - Quantity,
+        Previous_Qty: Previous_ProductQty,
+        NewQtyAdded: Quantity,
+      },
+      { where: { id: productid } }
+    )
+      .then(() => {
+        res.status(200).json({ message: "Record updated successfully" });
+      })
+      .catch((dbError) => {
+        res.status(500).json({ error: dbError.message });
+      });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+
 
 const UpdateproductImage = async (req, res) => {
   const image = req.file;
@@ -204,5 +253,7 @@ module.exports = {
   GetAllProducts,
   UpdateproductImage,
   UpdateQuantity,
+  UpdateQuantitySales,
+  GetProductBranch ,
   DeleteRecord 
 };

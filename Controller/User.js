@@ -9,6 +9,7 @@ const CreateUser=async(req, res) => {
     const {username,password,Branch}= req.body
   
     try {
+      
         const user = await UserModel.create({
             username,
             password,
@@ -57,6 +58,7 @@ const GetAllUser = async (req,res)=>{
     } catch (error) {
       res.status(400).json({error:error.message})
     }
+
   }
 
 
